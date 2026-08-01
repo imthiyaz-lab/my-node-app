@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -10,11 +12,18 @@ services:
       - "1433:1433"
     volumes:
       - sqldata:/var/opt/mssql
+      - ./init:/container-init # Added to mount your init-db.sh script into the container
     healthcheck:
       test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-C", "-S", "localhost", "-U", "sa", "-P", "${MSSQL_SA_PASSWORD}", "-Q", "SELECT 1"]
       interval: 10s
       timeout: 5s
       retries: 20
+    # Moved inside the 'sql' block with correct indentation
+    entrypoint: >
+      bash -c "
+      /container-init/init-db.sh &
+      /opt/mssql/bin/sqlservr
+      "
 
   app:
     build: .

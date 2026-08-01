@@ -77,11 +77,7 @@ async function ensureTb6r() {
         Comments NVARCHAR(MAX) NULL
       );
     END
-    ELSE
-    BEGIN
-      -- Optional migration: if old schema had NVARCHAR dates, keep as-is
-      -- You can manually alter columns to DATETIME2 if needed.
-    END
+    
   `);
 
   // Optional: business-rule unique index for decommission Source+DB
